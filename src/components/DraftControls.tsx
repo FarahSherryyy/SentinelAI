@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Threat } from '../services/nwsService'
-import { getSeverityHex, formatDateTime } from '../utils/formatters'
+import {  formatDateTime } from '../utils/formatters'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
