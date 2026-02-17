@@ -95,16 +95,27 @@
     transform: translateY(-1px);
   }
   
-  /* ─── Center Column Split ────────────────────────────────────────────────────── */
-  .center-column {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    overflow-x: hidden;
-    border-right: 1px solid var(--border);
-    padding: var(--space-lg);
-    gap: var(--space-lg);
-  }
+/* ─── Center Column Split ────────────────────────────────────────────────────── */
+.center-column {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid var(--border);
+  padding: var(--space-lg);
+  gap: var(--space-lg);
+}
+
+/* ─── Right Column (Alert Generation) ────────────────────────────────────────── */
+.right-column {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: var(--space-lg);
+  gap: var(--space-lg);
+  height: 100%;
+}
   
   /* ─── Threat Detail ──────────────────────────────────────────────────────────── */
   .threat-detail {
@@ -363,22 +374,21 @@
     color: var(--text-muted);
   }
   
-  /* ─── Alert Output ───────────────────────────────────────────────────────────── */
-  .alert-output {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-  }
-  
-  .alert-output-inner {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 16px;
-    gap: 16px;
-    overflow-y: auto;
-  }
+/* ─── Alert Output ───────────────────────────────────────────────────────────── */
+.alert-output {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.alert-output-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 16px;
+  overflow-y: auto;
+}
   
   .output-header {
     display: flex;
@@ -645,26 +655,26 @@
     pointer-events: none;
   }
 
-  /* ─── Responsive Breakpoints ─────────────────────────────────────────────────── */
-  @media (max-width: 1024px) {
-    .main-content {
-      grid-template-columns: 30% 70%;
-    }
-    
-    .alert-output {
-      display: none;
-    }
+/* ─── Responsive Breakpoints ─────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 30% 70%;
   }
+  
+  .right-column {
+    display: none;
+  }
+}
 
-  @media (max-width: 768px) {
-    .main-content {
-      grid-template-columns: 1fr;
-    }
-    
-    .threat-feed,
-    .alert-output {
-      display: none;
-    }
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .threat-feed,
+  .right-column {
+    display: none;
+  }
     
     .navbar {
       padding: 0 var(--space-md);

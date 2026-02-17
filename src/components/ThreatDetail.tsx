@@ -44,7 +44,7 @@ const ThreatDetail = ({ threat }: ThreatDetailProps) => {
     setSummaryError(null)
 
     try {
-      const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY
 
       if (!apiKey) {
         throw new Error('API key not configured')

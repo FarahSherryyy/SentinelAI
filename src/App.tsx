@@ -3,6 +3,7 @@ import './App.css'
 import NavBar from './components/NavBar'
 import ThreatFeed from './components/ThreatFeed'
 import ThreatDetail from './components/ThreatDetail'
+import ThreatEscalation from './components/ThreatEscalation'
 import DraftControls from './components/DraftControls'
 import AlertOutput from './components/AlertOutput'
 import { useThreats } from './hooks/useThreats'
@@ -60,17 +61,20 @@ const App = () => {
           onSelectThreat={handleSelectThreat}
         />
 
-        {/* Center Column — Detail + Draft Controls */}
+        {/* Center Column — Analysis: Detail + Escalation */}
         <div className="center-column">
           <ThreatDetail threat={selectedThreat} />
+          <ThreatEscalation threat={selectedThreat} allThreats={threats} />
+        </div>
+
+        {/* Right Column — Alert Generation: Draft Controls + Alert Output */}
+        <div className="right-column">
           <DraftControls
             threat={selectedThreat}
             onAlertsGenerated={setGeneratedAlerts}
           />
+          <AlertOutput alerts={generatedAlerts} />
         </div>
-
-        {/* Right Column — Alert Output */}
-        <AlertOutput alerts={generatedAlerts} />
 
       </div>
 

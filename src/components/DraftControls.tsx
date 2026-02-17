@@ -36,7 +36,7 @@ const DraftControls = ({ threat, onAlertsGenerated }: DraftControlsProps) => {
     setError(null)
 
     try {
-      const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY
+      const apiKey = import.meta.env.VITE_GROQ_API_KEY
 
       if (!apiKey || apiKey === 'your_grok_api_key_here') {
         throw new Error('Please add your Groq API key to the .env file')
