@@ -71,7 +71,12 @@ LOCATION: ${threat.areaDesc}
 
 SUMMARY:`
 
-      const response = await fetch('/groq/openai/v1/chat/completions', {
+      // Use proxy in development, direct API in production
+      const apiUrl = import.meta.env.DEV
+        ? '/groq/openai/v1/chat/completions'
+        : 'https://api.groq.com/openai/v1/chat/completions'
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

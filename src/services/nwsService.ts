@@ -21,8 +21,13 @@ export interface Threat {
 
 export const fetchNWSAlerts = async (stateCode: string): Promise<Threat[]> => {
   try {
+    // Use proxy in development, direct API in production
+    const baseUrl = import.meta.env.DEV 
+      ? '/nws'
+      : 'https://api.weather.gov'
+
     const response = await axios.get(
-      `/nws/alerts/active?area=${stateCode}`,
+      `${baseUrl}/alerts/active?area=${stateCode}`,
       {
         headers: {
           'User-Agent': 'SentinelAI/1.0 (emergency-monitor@sentinelai.dev)',

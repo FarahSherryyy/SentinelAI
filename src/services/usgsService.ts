@@ -6,9 +6,14 @@ import { Threat } from './nwsService'
 
 export const fetchUSGSEarthquakes = async (stateCode: string): Promise<Threat[]> => {
   try {
+    // Use proxy in development, direct API in production
+    const baseUrl = import.meta.env.DEV 
+      ? '/usgs'
+      : 'https://earthquake.usgs.gov'
+
     // Fetch magnitude 2.5+ earthquakes from the last day
     const response = await axios.get(
-      `/usgs/earthquakes/feed/v1.0/summary/2.5_day.geojson`
+      `${baseUrl}/earthquakes/feed/v1.0/summary/2.5_day.geojson`
     )
 
     const features = response.data?.features ?? []
