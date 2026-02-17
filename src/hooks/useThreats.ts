@@ -72,7 +72,7 @@ export const useThreats = (stateCode: string): UseThreatsReturn => {
     fetchAll()
   }, [stateCode])
 
-  // Auto-refresh every 5 minutes
+  // Auto refresshh every 5 minutes 
   useEffect(() => {
     const interval = setInterval(fetchAll, 5 * 60 * 1000)
     return () => clearInterval(interval)
