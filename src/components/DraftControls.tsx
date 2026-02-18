@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Threat } from '../services/nwsService'
-import {  formatDateTime } from '../utils/formatters'
+import { formatDateTime } from '../utils/formatters'
+import { AudienceSegment } from '../services/grokService'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -15,12 +16,13 @@ export interface GeneratedAlerts {
 
 interface DraftControlsProps {
   threat: Threat | null
+  selectedSegment?: AudienceSegment | null
   onAlertsGenerated: (alerts: GeneratedAlerts) => void
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-const DraftControls = ({ threat, onAlertsGenerated }: DraftControlsProps) => {
+const DraftControls = ({ threat, selectedSegment, onAlertsGenerated }: DraftControlsProps) => {
   const [audience, setAudience] = useState<AudienceType>('General Public')
   const [tone, setTone] = useState<ToneType>('Urgent')
   const [loading, setLoading] = useState(false)
@@ -28,6 +30,20 @@ const DraftControls = ({ threat, onAlertsGenerated }: DraftControlsProps) => {
 
   const audiences: AudienceType[] = ['General Public', 'Schools', 'Utilities']
   const tones: ToneType[] = ['Urgent', 'Informational', 'All-Clear']
+
+  // Update audience/tone when segment is selected
+  useEffect(() => {
+    if (selectedSegment) {
+      // Map segment priority to tone
+      const toneMap: Record<string, ToneType> = {
+        'Critical': 'Urgent',
+        'High': 'Urgent',
+        'Medium': 'Informational',
+        'Low': 'Informational',
+      }
+      setTone(toneMap[selectedSegment.priority] || 'Urgent')
+    }
+  }, [selectedSegment])
 
   const handleDraft = async () => {
     if (!threat) return
@@ -42,7 +58,7 @@ const DraftControls = ({ threat, onAlertsGenerated }: DraftControlsProps) => {
         throw new Error('Please add your Groq API key to the .env file')
       }
 
-      const prompt = buildPrompt(threat, audience, tone)
+      const prompt = buildPrompt(threat, audience, tone, selectedSegment)
 
       // Use proxy in development, direct API in production
       const apiUrl = import.meta.env.DEV
@@ -85,6 +101,16 @@ const DraftControls = ({ threat, onAlertsGenerated }: DraftControlsProps) => {
       {/* Title */}
       <div className="draft-controls-title">
         ✨ Generate Alert Message
+        {selectedSegment && (
+          <div style={{ 
+            fontSize: '12px', 
+            color: 'rgba(255,255,255,0.6)', 
+            fontWeight: 'normal',
+            marginTop: '4px'
+          }}>
+            For: {selectedSegment.name}
+          </div>
+        )}
       </div>
 
       {/* Audience Selector */}
@@ -156,11 +182,30 @@ const DraftControls = ({ threat, onAlertsGenerated }: DraftControlsProps) => {
 const buildPrompt = (
   threat: Threat,
   audience: AudienceType,
-  tone: ToneType
+  tone: ToneType,
+  segment?: AudienceSegment | null
 ): string => {
   const expires = threat.expires
     ? formatDateTime(threat.expires)
     : 'until further notice'
+
+  // If segment is selected, customize the prompt
+  const segmentInfo = segment ? `
+
+AUDIENCE SEGMENT:
+- Target: ${segment.name}
+- Description: ${segment.description}
+- Population: ${segment.estimatedSize}
+- Priority: ${segment.priority}
+- Recommended Tone: ${segment.messageCustomization.tone}
+
+KEY POINTS TO INCLUDE:
+${segment.messageCustomization.keyPoints.map(p => `- ${p}`).join('\n')}
+
+ACTION ITEMS:
+${segment.messageCustomization.actionItems.map(a => `- ${a}`).join('\n')}
+
+IMPORTANT: Tailor the message specifically for this audience segment.` : ''
 
   return `You are an emergency communications officer for a public safety agency.
 
@@ -170,7 +215,7 @@ A threat has been detected with the following details:
 - Location: ${threat.areaDesc}
 - Details: ${threat.description}
 - Expires: ${expires}
-- Source: ${threat.source}
+- Source: ${threat.source}${segmentInfo}
 
 Generate exactly 3 alert messages for the following parameters:
 - Audience: ${audience}

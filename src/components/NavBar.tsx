@@ -30,16 +30,15 @@ const NavBar = ({
   onRefresh,
   loading,
 }: NavBarProps) => {
-  // Theme state
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  // Theme state — default to light
+  const [theme, setTheme] = useState<'dark' | 'light'>('light')
 
-  // Load theme from localStorage on mount
+  // Load theme from localStorage on mount; default to light if none saved
   useEffect(() => {
     const savedTheme = localStorage.getItem('sentinel-theme') as 'dark' | 'light' | null
-    if (savedTheme) {
-      setTheme(savedTheme)
-      document.documentElement.setAttribute('data-theme', savedTheme)
-    }
+    const resolved = savedTheme || 'light'
+    setTheme(resolved)
+    document.documentElement.setAttribute('data-theme', resolved)
   }, [])
 
   // Toggle theme

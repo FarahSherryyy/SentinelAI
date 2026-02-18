@@ -25,40 +25,39 @@ const ThreatEscalation = ({ threat, allThreats }: ThreatEscalationProps) => {
   const [error, setError] = useState<string | null>(null)
   const [showHistorical, setShowHistorical] = useState(false)
 
-  // Fetch prediction when threat changes
+  // Clear prediction when threat changes (no auto-fetch to reduce API cost)
   useEffect(() => {
     if (!threat) {
       setPrediction(null)
       setCompoundRisk(null)
+      setError(null)
       return
     }
+    setPrediction(null)
+    setCompoundRisk(null)
+    setError(null)
+  }, [threat?.id])
 
-    const fetchPrediction = async () => {
-      setLoading(true)
-      setError(null)
-
-      try {
-        // Get escalation prediction for selected threat
-        const escalation = await predictThreatEscalation(threat)
-        setPrediction(escalation)
-
-        // Get compound risk analysis if multiple threats
-        if (allThreats.length >= 2) {
-          const compound = await analyzeCompoundRisks(allThreats)
-          setCompoundRisk(compound)
-        } else {
-          setCompoundRisk(null)
-        }
-      } catch (err) {
-        console.error('Failed to fetch threat prediction:', err)
-        setError('Failed to generate prediction. Please try again.')
-      } finally {
-        setLoading(false)
+  const fetchPrediction = async () => {
+    if (!threat) return
+    setLoading(true)
+    setError(null)
+    try {
+      const escalation = await predictThreatEscalation(threat)
+      setPrediction(escalation)
+      if (allThreats.length >= 2) {
+        const compound = await analyzeCompoundRisks(allThreats)
+        setCompoundRisk(compound)
+      } else {
+        setCompoundRisk(null)
       }
+    } catch (err) {
+      console.error('Failed to fetch threat prediction:', err)
+      setError('Failed to generate prediction. Please try again.')
+    } finally {
+      setLoading(false)
     }
-
-    fetchPrediction()
-  }, [threat?.id, allThreats.length])
+  }
 
   // Empty state
   if (!threat) {
@@ -89,7 +88,7 @@ const ThreatEscalation = ({ threat, allThreats }: ThreatEscalationProps) => {
     )
   }
 
-  // Error state
+  // Error state (with retry button)
   if (error) {
     return (
       <div className="threat-escalation">
@@ -100,12 +99,36 @@ const ThreatEscalation = ({ threat, allThreats }: ThreatEscalationProps) => {
         <div className="escalation-error">
           <span className="error-icon">⚠️</span>
           <p>{error}</p>
+          <button type="button" className="escalation-generate-btn" onClick={fetchPrediction}>
+            🔄 Try Again
+          </button>
         </div>
       </div>
     )
   }
 
-  if (!prediction) return null
+  // Threat selected but no prediction yet — show generate button (saves API cost)
+  if (!prediction) {
+    return (
+      <div className="threat-escalation">
+        <div className="escalation-header">
+          <h2>🤖 Threat Escalation Prediction</h2>
+          <span className="ai-badge">Powered by Groq AI</span>
+        </div>
+        <div className="escalation-generate-prompt">
+          <p>Get AI-powered escalation probability, timeframe, and recommended actions for this threat.</p>
+          <button
+            type="button"
+            className="escalation-generate-btn"
+            onClick={fetchPrediction}
+            disabled={loading}
+          >
+            {loading ? 'Analyzing…' : '✨ Generate with AI'}
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="threat-escalation">
@@ -114,6 +137,15 @@ const ThreatEscalation = ({ threat, allThreats }: ThreatEscalationProps) => {
       <div className="escalation-header">
         <h2>🤖 Threat Escalation Prediction</h2>
         <span className="ai-badge">Powered by Groq AI</span>
+        <button
+          type="button"
+          className="escalation-refresh-btn"
+          onClick={fetchPrediction}
+          disabled={loading}
+          title="Regenerate prediction"
+        >
+          {loading ? '…' : '🔄'}
+        </button>
       </div>
 
       {/* Escalation Timeline */}

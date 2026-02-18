@@ -105,6 +105,7 @@
   border-radius: 8px;
   padding: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   gap: 12px;
 }
@@ -117,6 +118,62 @@
   color: #fca5a5;
   margin: 0;
   font-size: 14px;
+}
+
+/* ─── Generate prompt (no auto-fetch) ────────────────────────────────── */
+
+.escalation-generate-prompt {
+  text-align: center;
+  padding: 32px 24px;
+}
+
+.escalation-generate-prompt p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin: 0 0 20px 0;
+}
+
+.escalation-generate-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.escalation-generate-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.escalation-generate-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.escalation-refresh-btn {
+  margin-left: auto;
+  padding: 6px 10px;
+  background: rgba(102, 126, 234, 0.2);
+  border: 1px solid rgba(102, 126, 234, 0.4);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.escalation-refresh-btn:hover:not(:disabled) {
+  background: rgba(102, 126, 234, 0.35);
+}
+
+.escalation-refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ─── Escalation Timeline ────────────────────────────────────────────── */
@@ -706,6 +763,7 @@
 }
 
 [data-theme='light'] .escalation-empty p,
+[data-theme='light'] .escalation-generate-prompt p,
 [data-theme='light'] .reasoning-text,
 [data-theme='light'] .indicator-item,
 [data-theme='light'] .action-text,
@@ -846,6 +904,16 @@
 
 [data-theme='light'] .escalation-error p {
   color: #dc2626;
+}
+
+[data-theme='light'] .escalation-refresh-btn {
+  background: rgba(102, 126, 234, 0.15);
+  border-color: rgba(102, 126, 234, 0.4);
+  color: #4338ca;
+}
+
+[data-theme='light'] .escalation-refresh-btn:hover:not(:disabled) {
+  background: rgba(102, 126, 234, 0.25);
 }
 
 /* Prediction section border - Light Theme */
