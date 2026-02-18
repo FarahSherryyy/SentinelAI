@@ -152,6 +152,37 @@
   letter-spacing: 0.5px;
 }
 
+/* ─── Next-step hint (after Generate with AI) ─────────────────────────── */
+
+.seg-next-step-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  border-radius: 8px;
+}
+
+.seg-next-step-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+
+.seg-next-step-hint p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.seg-next-step-hint strong {
+  color: #93c5fd;
+  font-weight: 600;
+}
+
 /* ─── Segments List ──────────────────────────────────────────────────── */
 
 .segments-list {
@@ -458,4 +489,17 @@
 
 [data-theme='light'] .segmentation-refresh-btn:hover {
   background: rgba(102, 126, 234, 0.25);
+}
+
+[data-theme='light'] .seg-next-step-hint {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme='light'] .seg-next-step-hint p {
+  color: rgba(0, 0, 0, 0.75);
+}
+
+[data-theme='light'] .seg-next-step-hint strong {
+  color: #2563eb;
 }

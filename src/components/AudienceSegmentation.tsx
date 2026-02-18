@@ -187,6 +187,14 @@ const AudienceSegmentation = ({ threat, onGenerateForSegment }: AudienceSegmenta
         </div>
       </div>
 
+      {/* Next-step hint: use Draft Alert with AI */}
+      <div className="seg-next-step-hint">
+        <span className="seg-next-step-icon">💡</span>
+        <p>
+          Expand a segment and click <strong>Generate Alert for [segment]</strong>, then use <strong>Draft Alert with AI</strong> below to create your message.
+        </p>
+      </div>
+
       {/* Segments List */}
       <div className="segments-list">
         {sortedSegments.map((segment) => (
