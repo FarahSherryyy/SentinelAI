@@ -31,19 +31,27 @@ const DraftControls = ({ threat, selectedSegment, onAlertsGenerated }: DraftCont
   const audiences: AudienceType[] = ['General Public', 'Schools', 'Utilities']
   const tones: ToneType[] = ['Urgent', 'Informational', 'All-Clear']
 
+  // Map segment priority to tone (used for both UI and when auto-drafting)
+  const toneMap: Record<string, ToneType> = {
+    'Critical': 'Urgent',
+    'High': 'Urgent',
+    'Medium': 'Informational',
+    'Low': 'Informational',
+  }
+
   // Update audience/tone when segment is selected
   useEffect(() => {
     if (selectedSegment) {
-      // Map segment priority to tone
-      const toneMap: Record<string, ToneType> = {
-        'Critical': 'Urgent',
-        'High': 'Urgent',
-        'Medium': 'Informational',
-        'Low': 'Informational',
-      }
       setTone(toneMap[selectedSegment.priority] || 'Urgent')
     }
   }, [selectedSegment])
+
+  // When user clicks "Generate Alert for [segment]", auto-generate the message so it appears without clicking Draft Alert with AI again
+  useEffect(() => {
+    if (threat && selectedSegment && !loading) {
+      handleDraft()
+    }
+  }, [selectedSegment?.id, threat?.id])
 
   const handleDraft = async () => {
     if (!threat) return
@@ -58,7 +66,8 @@ const DraftControls = ({ threat, selectedSegment, onAlertsGenerated }: DraftCont
         throw new Error('Please add your Groq API key to the .env file')
       }
 
-      const prompt = buildPrompt(threat, audience, tone, selectedSegment)
+      const effectiveTone = selectedSegment ? (toneMap[selectedSegment.priority] || 'Urgent') : tone
+      const prompt = buildPrompt(threat, audience, effectiveTone, selectedSegment)
 
       // Use proxy in development, direct API in production
       const apiUrl = import.meta.env.DEV
