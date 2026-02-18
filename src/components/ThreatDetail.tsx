@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Threat } from '../services/nwsService'
 import {
   getSeverityColor,
@@ -20,6 +20,15 @@ const ThreatDetail = ({ threat }: ThreatDetailProps) => {
   const [isGeneratingSummary, setIsGeneratingSummary] = useState(false)
   const [summaryError, setSummaryError] = useState<string | null>(null)
   const [showOriginalText, setShowOriginalText] = useState(true)
+
+  // Clear AI summary when user switches to a different threat so it doesn't show the old summary
+  useEffect(() => {
+    if (threat) {
+      setAiSummary(null)
+      setSummaryError(null)
+      setShowOriginalText(true)
+    }
+  }, [threat?.id])
 
   // Empty state — no threat selected
   if (!threat) {
