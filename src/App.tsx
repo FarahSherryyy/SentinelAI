@@ -18,6 +18,7 @@ const App = () => {
   const [generatedAlerts, setGeneratedAlerts] = useState<GeneratedAlerts | null>(null)
   const [selectedSegment, setSelectedSegment] = useState<AudienceSegment | null>(null)
   const draftControlsRef = useRef<HTMLDivElement>(null)
+  const alertOutputRef = useRef<HTMLDivElement>(null)
 
   const {
     threats,
@@ -43,15 +44,18 @@ const App = () => {
     setSelectedSegment(null)
   }
 
-  // When user clicks "Generate Alert for Segment"
+  // When user clicks "Generate Alert for Segment" (message will auto-generate; we scroll to message when it's ready via handleAlertsGenerated)
   const handleGenerateForSegment = (segment: AudienceSegment) => {
     setSelectedSegment(segment)
     setGeneratedAlerts(null)
-    
-    // Scroll to draft controls
+  }
+
+  // When alerts are generated, scroll to the message section so the user sees the result
+  const handleAlertsGenerated = (alerts: GeneratedAlerts) => {
+    setGeneratedAlerts(alerts)
     setTimeout(() => {
-      draftControlsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-    }, 100)
+      alertOutputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }, 150)
   }
 
   return (
@@ -94,10 +98,12 @@ const App = () => {
             <DraftControls
               threat={selectedThreat}
               selectedSegment={selectedSegment}
-              onAlertsGenerated={setGeneratedAlerts}
+              onAlertsGenerated={handleAlertsGenerated}
             />
           </div>
-          <AlertOutput alerts={generatedAlerts} />
+          <div ref={alertOutputRef}>
+            <AlertOutput alerts={generatedAlerts} />
+          </div>
         </div>
 
       </div>
